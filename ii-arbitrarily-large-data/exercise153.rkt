@@ -1,0 +1,54 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname exercise153) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require 2htdp/image)
+
+; N Image -> Image
+; produces a column of n copies of img
+(check-expect (col 0 (square 10 "solid" "blue")) (empty-scene 0 0))
+(check-expect (col 1 (square 10 "solid" "blue")) (above (square 10 "solid" "blue") (empty-scene 0 0)))
+(check-expect (col 2 (square 10 "solid" "blue"))
+              (above (square 10 "solid" "blue") (square 10 "solid" "blue") (empty-scene 0 0)))
+(define (col n img)
+  (cond
+    [(zero? n) (empty-scene 0 0)]
+    [else (above img (col (sub1 n) img))]))
+
+; N Image -> Image
+; produces a column of n copies of img
+(check-expect (row 0 (square 10 "solid" "blue")) (empty-scene 0 0))
+(check-expect (row 1 (square 10 "solid" "blue")) (beside (square 10 "solid" "blue") (empty-scene 0 0)))
+(check-expect (row 2 (square 10 "solid" "blue"))
+              (beside (square 10 "solid" "blue") (square 10 "solid" "blue") (empty-scene 0 0)))
+(define (row n img)
+  (cond
+    [(zero? n) (empty-scene 0 0)]
+    [else (beside img (row (sub1 n) img))]))
+
+(define ROWS 20)
+(define COLUMNS 10)
+(define SQUARE-SIZE 10)
+(define GRID (row COLUMNS (col ROWS (square SQUARE-SIZE "outline" "black"))))
+(define BACKGROUND (empty-scene (image-width GRID) (image-height GRID)))
+(define LECTURE-HALL (overlay GRID BACKGROUND))
+(define DOT (circle 3 "solid" "red"))
+
+; List-of-posn -> Image
+; produces an image with red dots placed at coordinates specified by posns in list
+(check-expect (add-balloons (cons (make-posn 3 3) '()))
+              (place-image DOT (* (posn-x (make-posn 3 3)) SQUARE-SIZE)
+                           (* (posn-y (make-posn 3 3)) SQUARE-SIZE)
+                           LECTURE-HALL))
+(check-expect (add-balloons (cons (make-posn 9 3) (cons (make-posn 3 3) '())))
+              (place-image DOT (* (posn-x (make-posn 9 3)) SQUARE-SIZE)
+                           (* (posn-y (make-posn 9 3)) SQUARE-SIZE)
+                           (place-image DOT (* (posn-x (make-posn 3 3)) SQUARE-SIZE)
+                                        (* (posn-y (make-posn 3 3)) SQUARE-SIZE)
+                                        LECTURE-HALL)))
+(define (add-balloons lop)
+  (cond
+    [(empty? lop) LECTURE-HALL]
+    [else
+     (place-image DOT (* (posn-x (first lop)) SQUARE-SIZE)
+                  (* (posn-y (first lop)) SQUARE-SIZE)
+                  (add-balloons (rest lop)))]))

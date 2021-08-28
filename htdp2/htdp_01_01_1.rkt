@@ -1,0 +1,39 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname htdp_01_01_1) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(define x 12)
+(define y 5)
+
+(sqrt (+ (sqr x) (sqr y)))
+
+(define prefix "hello")
+(define suffix "world")
+
+(string-append prefix "_" suffix)
+
+(define str "helloworld")
+(define i 5)
+
+(string-append
+   (substring str 0 i) "_" (substring str i (string-length str)))
+
+(string-append
+ (substring str 0 (- i 1))
+ (substring str (+ i 1) (string-length str)))
+
+(define sunny #true)
+(define friday #false)
+
+; incorrect?
+(and sunny friday)
+
+; https://github.com/eareese/htdp-exercises/blob/master/part01-fixed-size-data/009-boolean.rkt
+(and #false sunny)
+(and #true friday)
+(and
+ (and #false sunny)
+ (and #true friday))
+
+
+  
+       
