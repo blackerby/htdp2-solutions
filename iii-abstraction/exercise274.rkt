@@ -50,3 +50,5 @@
 
 ; All in all, I have spent enough time banging my head against the wall on this exercise, so I'm pushing it
 ; and moving on
+
+; in case I ever revisit: https://www.reddit.com/r/Racket/comments/ctjgz9/need_help_with_a_function_for_prefixes/

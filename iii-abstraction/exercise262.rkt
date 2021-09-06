@@ -27,3 +27,4 @@
        (build-list n diagonalize))]))
 
 ; thank you build list documentation example!
+; additional info: https://www.reddit.com/r/Racket/comments/doicim/identity_matrix_problem/
