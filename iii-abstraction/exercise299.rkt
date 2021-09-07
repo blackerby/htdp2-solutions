@@ -3,7 +3,7 @@
 #reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname exercise299) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 ; A Set is a function:
 ;   [X -> Boolean]
-; interpretation: if s is a set and ed is an atomic value,
+; interpretation: if s is a set and ed is a value,
 ; (s ed) produces #true if ed is an element of s, #false otherwise
 
 ; Set Number -> Boolean
