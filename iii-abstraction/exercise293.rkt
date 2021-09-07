@@ -29,7 +29,7 @@
 ; is (x first in l0) or #false
 (define (found? x k)
   (lambda (l0)
-    (or (false? l0)
+    (or (not (member? x k))
         (and
          (equal? x (first l0))
          (contains? k l0)))))

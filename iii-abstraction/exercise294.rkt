@@ -24,7 +24,7 @@
 ; is j the index of first occurrence of x on l
 (define (is-index? x l)
   (lambda (j)
-    (or (false? j)
+    (or (not (member? x l))
         (and
          (= (list-ref l j) x)
          (local
