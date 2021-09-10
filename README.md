@@ -11,6 +11,6 @@ I have not completed all of the exercises, and I probably won't (I got pretty ti
 
 ## Other solutions
 Here are my gotos when I want to check my work (or get unstuck)
-* https://github.com/S8A/htdp-exercises/blob/master/ex320.rkt
+* https://github.com/S8A/htdp-exercises/
 * https://github.com/atharvashukla/htdp
 * https://gitlab.com/cs-study/htdp/-/tree/main/
