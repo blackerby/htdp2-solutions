@@ -1,12 +1,16 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname exercise370) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+#reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname exercise374-375) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require 2htdp/image)
+
 ; An Xexpr is a list: 
 ; – (cons Symbol Body)
 ; – (cons Symbol (cons [List-of Attribute] Body))
+; - XWord
 ; where Body is short for [List-of Xexpr]
 ; An Attribute is a list of two items:
 ;   (cons Symbol (cons String '()))
+; An XWord is '(word ((text String))).
 
 (define a0 '((initial "X")))
  
@@ -91,12 +95,6 @@
         (second (assq attr loa))
         #false)))
 
-; An XWord is '(word ((text String))).
-; examples:
-'(word ((text "pizza")))
-'(word ((text "pasta")))
-'(word ((text "fishsticks")))
-
 ; Any -> Boolean
 ; is x an XWord
 (check-expect (word? '(word ((text "pizza")))) #true)
@@ -119,3 +117,66 @@
 (check-expect (word-text '(word ((text "pizza")))) "pizza")
 (define (word-text xw)
   (find-attr (xexpr-attr xw) 'text))
+
+; An XItem.v2 is one of: 
+; – (cons 'li (cons XWord '()))
+; - (cons 'li (cons [List-of Attribute] (cons XWord '())))
+; – (cons 'li (cons XEnum.v2 '()))
+; – (cons 'li (cons [List-of Attribute] (cons XEnum.v2 '())))
+; 
+; An XEnum.v2 is one of:
+; – (cons 'ul [List-of XItem.v2])
+; – (cons 'ul (cons [List-of Attribute] [List-of XItem.v2]))
+
+(define SIZE 12) ; font size 
+(define COLOR "black") ; font color 
+(define BT ; a graphical constant 
+  (beside (circle 1 'solid 'black) (text " " SIZE COLOR)))
+
+; example:
+(define enum0
+  '(ul
+    (li (word ((text "one"))))
+    (li (word ((text "two"))))))
+ 
+; Image -> Image
+; marks item with bullet  
+(define (bulletize item)
+  (beside/align 'center BT item))
+
+; XEnum.v2 -> Image
+; renders an XEnum.v2 as an image
+(check-expect (render-enum enum0)
+              (above/align 'left
+                           (bulletize (text "one" 12 "black"))
+                           (bulletize (text "two" 12 "black"))))
+(define (render-enum xe)
+  (local ((define content (xexpr-content xe)))
+    (foldr (lambda (item so-far)
+             (above/align 'left (render-item item) so-far))
+           empty-image content)))
+  
+; XItem.v2 -> Image
+; renders one XItem.v2 as an image
+(check-expect (render-item '(li (word ((text "one")))))
+              (bulletize (text "one" 12 "black")))
+(check-expect (render-item '(li
+                             (ul
+                              (li (word ((text "one"))))
+                              (li (word ((text "two")))))))
+              (bulletize (above/align 'left
+                                      (bulletize (text "one" 12 "black"))
+                                      (bulletize (text "two" 12 "black")))))
+(define (render-item an-item)
+  (local
+    ((define content (first (xexpr-content an-item))))
+    (cond
+      [(word? content)
+       (bulletize
+        (text (word-text content) SIZE COLOR))]
+      [else
+       (bulletize (render-enum content))])))
+
+; exercise 375
+; in either case, bulletize gets applied to the image that is produced. the original is more concise, but
+; I like how the rewritten version explicitly shows its intent.

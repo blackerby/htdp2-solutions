@@ -1,12 +1,16 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname exercise370) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+#reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname exercise376) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require 2htdp/image)
+
 ; An Xexpr is a list: 
 ; – (cons Symbol Body)
 ; – (cons Symbol (cons [List-of Attribute] Body))
+; - XWord
 ; where Body is short for [List-of Xexpr]
 ; An Attribute is a list of two items:
 ;   (cons Symbol (cons String '()))
+; An XWord is '(word ((text String))).
 
 (define a0 '((initial "X")))
  
@@ -91,12 +95,6 @@
         (second (assq attr loa))
         #false)))
 
-; An XWord is '(word ((text String))).
-; examples:
-'(word ((text "pizza")))
-'(word ((text "pasta")))
-'(word ((text "fishsticks")))
-
 ; Any -> Boolean
 ; is x an XWord
 (check-expect (word? '(word ((text "pizza")))) #true)
@@ -119,3 +117,94 @@
 (check-expect (word-text '(word ((text "pizza")))) "pizza")
 (define (word-text xw)
   (find-attr (xexpr-attr xw) 'text))
+
+; An XItem.v2 is one of: 
+; – (cons 'li (cons XWord '()))
+; – (cons 'li (cons [List-of Attribute] (list XWord)))
+; – (cons 'li (cons XEnum.v2 '()))
+; – (cons 'li (cons [List-of Attribute] (list XEnum.v2)))
+; 
+; An XEnum.v2 is one of:
+; – (cons 'ul [List-of XItem.v2])
+; – (cons 'ul (cons [List-of Attribute] [List-of XItem.v2]))
+
+; example:
+(define enum0
+  '(ul
+    (li (word ((text "one"))))
+    (li (word ((text "two"))))))
+
+(define SIZE 12) ; font size 
+(define COLOR "black") ; font color 
+(define BT ; a graphical constant 
+  (beside (circle 1 'solid 'black) (text " " SIZE COLOR)))
+ 
+; Image -> Image
+; marks item with bullet
+(check-expect (bulletize (text "one" SIZE 'black))
+              (beside/align 'center BT (text "one" SIZE 'black)))
+(define (bulletize item)
+  (beside/align 'center BT item))
+ 
+; XEnum.v2 -> Image
+; renders an XEnum.v2 as an image
+(check-expect (render-enum enum0)
+              (above/align 'left (render-item '(li (word ((text "one")))))
+                           (render-item '(li (word ((text "two")))))))
+(define (render-enum xe)
+  (local ((define content (xexpr-content xe))
+          ; XItem.v2 Image -> Image 
+          (define (deal-with-one item so-far)
+            (above/align 'left (render-item item) so-far)))
+    (foldr deal-with-one empty-image content)))
+ 
+; XItem.v2 -> Image
+; renders one XItem.v2 as an image
+(check-expect (render-item '(li (word ((text "one")))))
+              (bulletize (text "one" SIZE 'black)))
+(check-expect (render-item
+               '(li
+                 (ul
+                  (li (word ((text "one"))))
+                  (li (word ((text "two")))))))
+              (bulletize (above/align 'left (render-item '(li (word ((text "one")))))
+                                      (render-item '(li (word ((text "two"))))))))
+(define (render-item an-item)
+  (local ((define content (first (xexpr-content an-item))))
+    (bulletize
+      (cond
+        [(word? content)
+         (text (word-text content) SIZE 'black)]
+        [else (render-enum content)]))))
+
+(define hello-enum
+  '(ul
+    (li (word ((text "hello"))))
+    (li (ul
+         (li (word ((text "goodbye"))))
+         (li
+          (ul
+           (li (word ((text "hello"))))
+           (li (word ((text "hello"))))))))))
+
+; XItem.v2 -> Number
+; counts occurrence of the string "hello" in xi
+(define (count-hello-item xi)
+  (local ((define content (first (xexpr-content xi))))
+    (cond
+      [(word? content) (if (string=? "hello" (word-text content)) 1 0)]
+      [else (count-hello-enum content)])))
+
+; XEnum.v2 -> Number
+; counts all occurrences of the string "hello" in xe
+(check-expect (count-hello-enum hello-enum) 3)
+(define (count-hello-enum xe)
+  (local ((define content (xexpr-content xe)))
+    (foldr (lambda (item count)
+             (+ (count-hello-item item) count))
+             0 content)))
+  
+    
+   
+      
+    
