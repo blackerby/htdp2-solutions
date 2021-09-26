@@ -24,6 +24,5 @@
 (check-expect (drop '(1 2 3) 4) '())
 (define (drop l n)
   (cond
-    [(> n (length l)) '()]
-    [(= n 0) l]
+    [(or (empty? l) (<= n 0)) l]
     [else (drop (rest l) (sub1 n))]))
