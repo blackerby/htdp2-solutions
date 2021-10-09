@@ -268,7 +268,7 @@
                      (append (translate-row r db-2-content) b))
                    '() content))
           
-          ; Row -> [List-of Row] ; could clean this up
+          ; Row -> [List-of Row] ; could clean this up - how to use indexing instead of reversing?
           (define (translate-row row content)
             (local ((define last (first (reverse row))))
               (cond
