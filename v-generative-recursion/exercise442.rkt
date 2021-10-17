@@ -115,7 +115,7 @@ cpu time: 17 real time: 18 gc time: 0
                   (define pivot (first alon))
                   (define others (rest alon))
                   (define smallers (filter (lambda (x) (< x pivot)) others))
-                  (define largers (filter (lambda (x) (> x pivot)) others))
+                  (define largers (filter (lambda (x) (> x pivot)) others)) ; not using >= feels risky to me
                   (define (threshold-sort< l)
                     (if (<= (length l) THRESHOLD)
                         (sort< l)
