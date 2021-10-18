@@ -75,3 +75,34 @@
 ; what's missing from my work is keeping the search within the bounds of the array length
 ; Samuel may have the most elegant solution here:
 ; https://github.com/S8A/htdp-exercises/blob/master/ex451.rkt
+
+; Samuel's solution annotated
+
+; Table -> N
+; finds the smallest index for a root of the table t
+; assumes that the table is monotonically increasing
+; assume (<= (table-ref t left) 0 (table-ref t right))
+; generative roughly divides the table in half, the root is in one of
+; the halves
+; termination at some point the interval will be reduced to
+; a length of 1, at which point the result is one of the
+; interval's boundaries
+#;(define (find-binary t)
+  (local ((define len (table-length t))
+          (define (find-binary-helper left right fleft fright)
+            (cond
+              [(= (- right left) 1) ; trivially solvable problem (1)
+               (if (<= (abs fleft) (abs fright)) left right)]
+              [else
+               (local ((define mid (quotient (+ left right) 2)) ; ensures natural number (2)/(3)
+                       (define fmid (table-ref t mid)))
+                 (cond
+                   [(<= fleft 0 fmid)
+                    (find-binary-helper left mid fleft fmid)]
+                   [(<= fmid 0 fright)
+                    (find-binary-helper mid right fmid fright)]))])))
+    (find-binary-helper 0 (sub1 len)
+                        (table-ref t 0) (table-ref t (sub1 len)))))
+
+(define table9 (make-table 8 (lambda (x) (- x 3))))
+(check-within (find-binary table9) 3 ε)
