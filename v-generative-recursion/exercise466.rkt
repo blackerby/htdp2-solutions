@@ -79,12 +79,14 @@
 (check-expect (subtract '(2 5 12 31) '(2 2 3 10)) '(3 9 21))
 (check-expect (subtract '(4 1 -2 1)  '(2 2 3 10)) '(-3 -8 -19))
 (check-expect (subtract '(-3 -8 -19) '(3 9 21)) '(1 2))
+(check-expect (subtract '(3 9 21) '(-3 -8 -19)) '(1 2))
+(check-expect (subtract '(-3 9 21) '(-3 -8 -19)) '(17 40))
 (define (subtract eq1 eq2)
   (local ((define diff (map - eq1 eq2)))
     (cond
       [(= (first diff) 0) (rest diff)]
       [else
-       (local ((define factor (if (andmap negative? eq1)
+       (local ((define factor (if (or (negative? (first eq1)) (negative? (first eq2)))
                                   -1
                                   2)))
          (subtract eq1 (map (lambda (x) (* x factor)) eq2)))])))
