@@ -8,6 +8,7 @@ I have not completed all of the exercises, and I probably won't (I got pretty ti
 
 ## Notes
 * skipping section 16.8 (exercises 275, 276, 277, 278). not sure if I'll return to do any of those exercises
+* did exercises 486, 487, 488 (with some difficulty, peeks at the solutions below, and reminders about basic algebra from my wife) in my print copy of the book
 
 ## Other solutions
 Here are my gotos when I want to check my work (or get unstuck)
