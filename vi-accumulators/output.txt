@@ -1,0 +1,15 @@
+reads
+the standard
+input
+device
+(until
+closed)
+or the
+content
+of file
+f and
+produces
+it as
+a string,
+including
+newlines.
